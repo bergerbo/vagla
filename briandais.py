@@ -1,4 +1,4 @@
-end_of_word = " " 
+end_of_word = "\0" 
 
 def build_nodes(word):
     if len(word) == 0 :
@@ -13,30 +13,7 @@ class Node():
         self.value = value
         self.sibling = sibling
         self.child = child
-
-
-    def has_word(self, word):
-        if len(word) == 0 :
-            if self.value == end_of_word :
-                return True
-            else :
-                return self.sibling_has_word(word)
-
-        elif word[0] == self.value :
-            return self.child.has_word(word[1:])
-
-        else :
-            return self.sibling_has_word(word)
-
-
-    def sibling_has_word(self,word):
-        if self.sibling is None :
-            return False
-
-        else : 
-            return self.sibling.has_word(word)	
-
-
+    
     def add_word(self,word):
         if len(word) == 0 :
             if self.value == end_of_word :
@@ -58,32 +35,105 @@ class Node():
         else :
             self.sibling.add_word(word)
 
-    def print_tree(self, prefix):
+    def accept(self,visitor):
         if self.value == end_of_word :
-            print repr(prefix)
-            #print "\n"
+            visitor.eow(self)
         elif self.child is not None :
-            self.child.print_tree(prefix + self.value)
+            visitor.visit_child(self.child)
         if self.sibling is not None :
-            self.sibling.print_tree(prefix)
+            visitor.visit_sibling(self.sibling)
+
+    def has_word(self, word):
+        if len(word) == 0 :
+            if self.value == end_of_word :
+                return True
+            else :
+                return self.sibling_has_word(word)
+
+        elif word[0] == self.value :
+            return self.child.has_word(word[1:])
+
+        else :
+            return self.sibling_has_word(word)
+
+
+    def sibling_has_word(self,word):
+        if self.sibling is None :
+            return False
+        else : 
+            return self.sibling.has_word(word)	
+
+
+    def get_words(self, list, prefix):
+        if self.value == end_of_word :
+            list.append(prefix)
+        elif self.child is not None :
+            self.child.get_words(list, prefix + self.value)
+        if self.sibling is not None :
+            self.sibling.get_words(list, prefix)
 
     def count_words(self, cpt) :
-        ncpt = cpt
+        ncpt = 0
         if self.value == end_of_word :
-            ncpt += 1
+            ncpt = 1
         elif self.child is not None :
-            ncpt += self.child.count_words(cpt)
+            ncpt = self.child.count_words(cpt)
+
         if self.sibling is not None :
-            return self.sibling.count_words(ncpt)
+            return self.sibling.count_words(0) + ncpt
         else :
             return ncpt
 
 
+class CountVisitor():
+    def __init__(self):
+        self.cpt = 0
+
+    def collect(self):
+        return self.cpt
+
+    def eow(self,node):
+        self.cpt += 1
+
+    def visit_child(self,node):
+        node.accept(self)
+
+    def visit_sibling(self,node):
+        node.accept(self)
+
+class SearchVisitor():
+    def __init__(self,word):
+        self.word = word
+        self.found = False
+
+    def eow(self,node):
+        if len(self.word) == 0 :
+            self.found = True
+    
+    def visit_child(self,node):
+        if len(self.word) > 0 and self.word[0] == node.value :
+            self.word = self.word[1:]
+            node.accept(self)
+    
+    def visit_sibling(self,node):
+        node.accept(self)
+
+
+
 def Recherche(node, word):
-    return node.has_word(word)
+    v = SearchVisitor(word)
+    node.accept(v)
+    return v.found
 
 def ComptageMots(node):
-    return node.count(0)
+    v = CountVisitor()
+    node.accept(v)
+    return v.cpt
+
+def ListeMots(node):
+    list = []
+    node.get_words(list,"")
+    return sorted(list, key=str.lower)
 
 def ExampleBase():
     example_base = """A quel genial professeur de dactylographie sommes nous
@@ -95,3 +145,11 @@ def ExampleBase():
     for word in list[1:] :
         node.add_word(word)
     return node
+
+x = ExampleBase()
+l = ListeMots(x)
+r = Recherche(x,"dactylographie")
+nb = ComptageMots(x)
+print l
+print r
+print nb
