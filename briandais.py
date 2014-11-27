@@ -39,7 +39,12 @@ class Node():
 
     def add_word(self,word):
         if len(word) == 0 :
-            self.sibling = Node(end_of_word, self.sibling, None)
+            if self.value == end_of_word :
+                return
+            elif self.sibling is None :
+                self.sibling = Node(end_of_word, self.sibling, None)
+            else :
+                self.sibling.add_word(word)
 
         elif word[0] == self.value :
             if self.child is None :
@@ -61,7 +66,7 @@ class Node():
             self.child.print_tree(prefix + self.value)
         if self.sibling is not None :
             self.sibling.print_tree(prefix)
-    
+
     def count_words(self, cpt) :
         ncpt = cpt
         if self.value == end_of_word :
@@ -82,11 +87,10 @@ def ComptageMots(node):
 
 def ExampleBase():
     example_base = """A quel genial professeur de dactylographie sommes nous
-    redevables de la superbe phrase ci dessous, un
-    modele du genre, que toute dactylo connait par coeur puisque elle fait appel
-    a chacune des touches du
+    redevables de la superbe phrase ci dessous, un modele du genre, que tout
+    dactylo connait par coeur puisque elle fait appel a chacune des touches du
     clavier de la machine a ecrire?"""
-    list = example_base.split(" ")
+    list = example_base.replace("\n","").split(" ")
     node = build_nodes(list[0])
     for word in list[1:] :
         node.add_word(word)
