@@ -13,7 +13,7 @@ class Node():
         self.value = value
         self.sibling = sibling
         self.child = child
-    
+
     def add_word(self,word):
         if len(word) == 0 :
             if self.value == end_of_word :
@@ -89,9 +89,6 @@ class CountVisitor():
     def __init__(self):
         self.cpt = 0
 
-    def collect(self):
-        return self.cpt
-
     def eow(self,node):
         self.cpt += 1
 
@@ -101,39 +98,55 @@ class CountVisitor():
     def visit_sibling(self,node):
         node.accept(self)
 
-class SearchVisitor():
+class PrefixVisitor():
+    def __init__(self):
+        self.prefix = ""
+
+    def eow(self,node):
+        return
+
+    def visit_child(self,node):
+        self.prefix = self.prefix + node.value
+        node.accept(self)
+        self.prefix = self.prefix[:-1]
+
+    def visit_sibling(self,node):
+        self.prefix = self.prefix[:-1] + node.value
+        node.accept(self)
+
+class SearchVisitor(PrefixVisitor):
     def __init__(self,word):
+        PrefixVisitor.__init__(self)
         self.word = word
         self.found = False
 
     def eow(self,node):
-        if len(self.word) == 0 :
+        if self.word == self.prefix[:-1] :
             self.found = True
-    
-    def visit_child(self,node):
-        if len(self.word) > 0 and self.word[0] == node.value :
-            self.word = self.word[1:]
-            node.accept(self)
-    
-    def visit_sibling(self,node):
-        node.accept(self)
 
+class ListVisitor(PrefixVisitor):
+    def __init__(self):
+        PrefixVisitor.__init__(self)
+        self.list = []
+
+    def eow(self,node):
+        self.list.append(self.prefix[:-1])
 
 
 def Recherche(node, word):
     v = SearchVisitor(word)
-    node.accept(v)
+    v.visit_child(node)
     return v.found
 
 def ComptageMots(node):
     v = CountVisitor()
-    node.accept(v)
+    v.visit_child(node)
     return v.cpt
 
 def ListeMots(node):
-    list = []
-    node.get_words(list,"")
-    return sorted(list, key=str.lower)
+    v = ListVisitor()
+    v.visit_child(node)
+    return sorted(v.list, key=str.lower)
 
 def ExampleBase():
     example_base = """A quel genial professeur de dactylographie sommes nous
@@ -146,10 +159,18 @@ def ExampleBase():
         node.add_word(word)
     return node
 
+
+
 x = ExampleBase()
 l = ListeMots(x)
-r = Recherche(x,"dactylographie")
 nb = ComptageMots(x)
+
+r = True
+for word in l :
+    rw = Recherche(x,word)
+    if rw == False :
+        r = False
+
 print l
 print r
 print nb
