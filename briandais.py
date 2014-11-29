@@ -84,13 +84,10 @@ class Node():
         else :
             return ncpt
 
-
-class CountVisitor():
-    def __init__(self):
-        self.cpt = 0
+class Visitor():
 
     def eow(self,node):
-        self.cpt += 1
+        return
 
     def visit_child(self,node):
         node.accept(self)
@@ -98,12 +95,18 @@ class CountVisitor():
     def visit_sibling(self,node):
         node.accept(self)
 
-class PrefixVisitor():
+
+class CountVisitor(Visitor):
     def __init__(self):
-        self.prefix = ""
+        self.cpt = 0
 
     def eow(self,node):
-        return
+        self.cpt += 1
+
+
+class PrefixVisitor(Visitor):
+    def __init__(self):
+        self.prefix = ""
 
     def visit_child(self,node):
         self.prefix = self.prefix + node.value
@@ -114,15 +117,37 @@ class PrefixVisitor():
         self.prefix = self.prefix[:-1] + node.value
         node.accept(self)
 
-class SearchVisitor(PrefixVisitor):
+class MatchingVisitor(PrefixVisitor):
     def __init__(self,word):
         PrefixVisitor.__init__(self)
         self.word = word
+
+    def visit_child(self, node):
+        l = min(len(self.prefix),len(self.word))
+        if self.word[:l] == self.prefix[:l] :
+            PrefixVisitor.visit_child(self,node)
+
+class SearchVisitor(MatchingVisitor):
+    def __init__(self,word):
+        MatchingVisitor.__init__(self,word)
         self.found = False
 
     def eow(self,node):
         if self.word == self.prefix[:-1] :
             self.found = True
+
+class PrefixCountVisitor(MatchingVisitor):
+    def __init__(self,word):
+        MatchingVisitor.__init__(self,word)
+        self.cpt = 0
+
+    def eow(self, node):
+        self.cpt += 1
+
+class SupressVisitor(MatchingVisitor):
+    def __init__(self,word):
+        MatchingVisitor.__init__(self,word)
+        
 
 class ListVisitor(PrefixVisitor):
     def __init__(self):
@@ -132,21 +157,94 @@ class ListVisitor(PrefixVisitor):
     def eow(self,node):
         self.list.append(self.prefix[:-1])
 
+class NilVisitor(Visitor):
+    def __init__(self):
+        self.cpt = 0
 
-def Recherche(node, word):
-    v = SearchVisitor(word)
-    v.visit_child(node)
+    def count(self, node):
+        if node.child is None :
+            self.cpt += 1
+        if node.sibling is None :
+            self.cpt +=1
+
+    def visit_child(self,node):
+        self.count(node)
+        node.accept(self)
+
+    def visit_sibling(self,node):
+        self.count(node)
+        node.accept(self)
+
+
+class HeightVisitor(Visitor):
+    def __init__(self) :
+        self.depth = 0
+        self.height = 0
+
+    def visit_child(self,node):
+        self.depth += 1
+        if self.depth > self.height :
+            self.height = self.depth
+        node.accept(self)
+        self.depth -= 1
+
+class AverageDepthVisitor(Visitor):
+    def __init__(self) :
+        self.depth = 0
+        self.cpt = 0
+        self.total = 0
+
+    def handle(self, node) :
+        self.total += self.depth
+        self.cpt += 1
+
+    def average(self):
+        return self.total / float(self.cpt)
+
+    def visit_child(self,node):
+        self.depth += 1
+        self.handle(node)
+        node.accept(self)
+        self.depth -= 1
+
+    def visit_sibling(self,node):
+        self.handle(node)
+        node.accept(self)
+
+def Recherche(arbre, mot):
+    v = SearchVisitor(mot)
+    v.visit_child(arbre)
     return v.found
 
-def ComptageMots(node):
+def ComptageMots(arbre):
     v = CountVisitor()
-    v.visit_child(node)
+    v.visit_child(arbre)
     return v.cpt
 
-def ListeMots(node):
+def ListeMots(arbre):
     v = ListVisitor()
-    v.visit_child(node)
+    v.visit_child(arbre)
     return sorted(v.list, key=str.lower)
+
+def ComptageNil(arbre):
+    v = NilVisitor()
+    v.visit_child(arbre)
+    return v.cpt
+
+def Hauteur(arbre):
+    v = HeightVisitor()
+    v.visit_child(arbre)
+    return v.height
+
+def ProfondeurMoyenne(arbre):
+    v = AverageDepthVisitor()
+    v.visit_child(arbre)
+    return v.average()
+
+def Prefixe(arbre,mot):
+    v = PrefixCountVisitor(mot)
+    v.visit_child(arbre)
+    return v.cpt
 
 def ExampleBase():
     example_base = """A quel genial professeur de dactylographie sommes nous
@@ -154,6 +252,7 @@ def ExampleBase():
     dactylo connait par coeur puisque elle fait appel a chacune des touches du
     clavier de la machine a ecrire?"""
     list = example_base.replace("\n","").split(" ")
+    while "" in list : list.remove("")
     node = build_nodes(list[0])
     for word in list[1:] :
         node.add_word(word)
@@ -161,16 +260,25 @@ def ExampleBase():
 
 
 
-x = ExampleBase()
-l = ListeMots(x)
-nb = ComptageMots(x)
+arbre = ExampleBase()
+liste = ListeMots(arbre)
+nbMots = ComptageMots(arbre)
+nbNil = ComptageNil(arbre)
+hauteur = Hauteur(arbre)
+profMoyenne = ProfondeurMoyenne(arbre)
+prefixeDactylo = Prefixe(arbre,"dactylo")
+echecRecherche = Recherche(arbre,"Malkovich")
+rechercheGenerale = True
+for mot in liste :
+    rw = Recherche(arbre,mot)
+    rechercheGenerale = rechercheGenerale and rw
 
-r = True
-for word in l :
-    rw = Recherche(x,word)
-    if rw == False :
-        r = False
 
-print l
-print r
-print nb
+print liste
+print echecRecherche
+print rechercheGenerale
+print nbMots
+print nbNil
+print hauteur
+print profMoyenne
+print prefixeDactylo
