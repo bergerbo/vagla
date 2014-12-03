@@ -177,10 +177,30 @@ def Hauteur(arbre):
 
     return max(h1,h2,h3)
 
+def ProfondeurParNoeud(arbre,N):
+    n1 = N
+    n2 = N
+    n3 = N
+
+    if arbre.eq is not None:
+        n1 += ProfondeurParNoeud(arbre.eq,n1+1)
+
+    if arbre.inf is not None:
+        n2 += ProfondeurParNoeud(arbre.inf,n2+1)
+
+    if arbre.sup is not None:
+        n3 += ProfondeurParNoeud(arbre.sup,n3+1)
+
+    return n1+n2+n3
+
 def ProfondeurMoyenne(arbre):
-    
+    return ProfondeurParNoeud(arbre,0)/ComptageNoeuds(arbre)
+
+
+
 
 arbre = Exemple_de_Base()
+
 print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
 
 print( "Nombre de Nil dans l'arbre: " + str(ComptageNil(arbre)) )
@@ -188,4 +208,6 @@ print( "Nombre de Nil dans l'arbre: " + str(ComptageNil(arbre)) )
 print( "Nombre de noeuds dans l'arbre: " + str(ComptageNoeuds(arbre)) )
 
 print( "Hauteur de l'arbre: " + str(Hauteur(arbre)) )
+
+print( "Profondeur moyenne de l'arbre: " + str(ProfondeurMoyenne(arbre)) )
 print arbre.print_hybrid_trie()
