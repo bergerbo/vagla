@@ -37,8 +37,7 @@ def Prefixe(arbre,mot):
     return v.cpt
 
 def Suppression(arbre, mot):
-    v = briandais_visitors.SuppressVisitor(mot)
-    v.visit_child(arbre)
+    arbre.suppress_word(mot)
 
 def ExampleBase():
     example_base = """A quel genial professeur de dactylographie sommes nous
@@ -74,12 +73,11 @@ print hauteur
 print profMoyenne
 print prefixeDactylo
 
-#for mot in liste :
-#    if liste.index(mot) % 2 == 0 :
-#        print mot
-#           Suppression(arbre,mot)
-Suppression(arbre,"modele")
-Suppression(arbre,"dactylographie")
+for mot in liste :
+    if liste.index(mot) % 2 == 0 :
+        print mot
+        Suppression(arbre,mot)
+
 
 liste = ListeMots(arbre)
 nbMots = ComptageMots(arbre)
