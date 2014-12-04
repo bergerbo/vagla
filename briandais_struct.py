@@ -12,19 +12,37 @@ def clone(node) :
         return None
     return Node(node.value, clone(node.sibling), clone(node.child))
 
-def fuse_trees(from,into):
-    if from.value == into.value :
-        if from.child is not None :
+def fuse_trees(node, into):
+    value = into.value
+    child = None
+    sibling = None
+    
+    if node.value == into.value :
+        if node.child is not None :
             if into.child is not None :
-                fuse_trees(from.child, into.child)
+                child = fuse_trees(node.child, into.child)
             else :
-                into.child = from.child
-    else :
-        if into.sibling is not None :
-            fuse_trees(from,into.sibling)
+                child = clone(node.child)
         else :
-            into.sibling = Node()
-
+            child = clone(into.child)
+        
+        
+        if node.sibling is not None :
+            if into.sibling is not None :
+                sibling = fuse_trees(node.sibling,into.sibling)
+            else :
+                sibling = clone(node.sibling)
+        else :
+            sibling = clone(into.sibling)
+    
+    else :
+        child = clone(into.child)
+        if into.sibling is not None :
+            sibling = fuse_trees(node,into.sibling)
+        else :
+            sibling = clone(node);
+    
+    return Node(value,sibling,child)
 
 class Node():
 

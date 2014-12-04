@@ -52,50 +52,25 @@ def ExampleBase():
     return node
 
 arbre = ExampleBase()
-liste = ListeMots(arbre)
-nbMots = ComptageMots(arbre)
-nbNil = ComptageNil(arbre)
-hauteur = Hauteur(arbre)
-profMoyenne = ProfondeurMoyenne(arbre)
-prefixeDactylo = Prefixe(arbre,"dactylo")
-echecRecherche = Recherche(arbre,"Malkovich")
-rechercheGenerale = True
-for mot in liste :
-    rw = Recherche(arbre,mot)
-    rechercheGenerale = rechercheGenerale and rw
 
+liste = ListeMots(arbre)
 print liste
-print echecRecherche
-print rechercheGenerale
-print nbMots
-print nbNil
-print hauteur
-print profMoyenne
-print prefixeDactylo
+
+arbre2 = briandais_struct.clone(arbre)
 
 for mot in liste :
     if liste.index(mot) % 2 == 0 :
-        print mot
         Suppression(arbre,mot)
-
+    else :
+        Suppression(arbre2,mot)
 
 liste = ListeMots(arbre)
-nbMots = ComptageMots(arbre)
-nbNil = ComptageNil(arbre)
-hauteur = Hauteur(arbre)
-profMoyenne = ProfondeurMoyenne(arbre)
-prefixeDactylo = Prefixe(arbre,"dactylo")
-echecRecherche = Recherche(arbre,"Malkovich")
-rechercheGenerale = True
-for mot in liste :
-    rw = Recherche(arbre,mot)
-    rechercheGenerale = rechercheGenerale and rw
+liste2 = ListeMots(arbre2)
 
 print liste
-print echecRecherche
-print rechercheGenerale
-print nbMots
-print nbNil
-print hauteur
-print profMoyenne
-print prefixeDactylo
+print liste2
+
+arbre3 = briandais_struct.fuse_trees(arbre,arbre2)
+
+liste3 = ListeMots(arbre3)
+print liste3
