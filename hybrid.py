@@ -126,7 +126,34 @@ def Recherche(node, word):
 def ComptageMots(node):
     return node.compte_mots(0)
 
-#def ListeMots(node):
+def ListerMots(arbre):
+    tmp=[]
+    #liste.append(end_of_word)
+    liste=ListeUnMot(arbre,"",tmp)
+    return liste;
+
+def ListeUnMot(arbre,word,liste):
+
+    if arbre.value == end_of_word:
+        #print word
+        if arbre.inf is not None:
+            ListeUnMot(arbre.inf,word,liste)
+        if arbre.sup is not None:
+            ListeUnMot(arbre.sup,word,liste)
+        liste.append(word)
+
+    if arbre.eq is not None:
+        word += arbre.value
+        ListeUnMot(arbre.eq,word,liste)
+        
+    if arbre.inf is not None:
+        ListeUnMot(arbre.inf,word[0:-1],liste)
+
+    if arbre.sup is not None:
+        ListeUnMot(arbre.sup,word[0:-1],liste)
+    
+    return liste
+
 
 def ComptageNil(arbre):
     cpt = 0
@@ -183,13 +210,13 @@ def ProfondeurParNoeud(arbre,N):
     n3 = N
 
     if arbre.eq is not None:
-        n1 += ProfondeurParNoeud(arbre.eq,n1+1)
+        n1 = ProfondeurParNoeud(arbre.eq,n1+1)
 
     if arbre.inf is not None:
-        n2 += ProfondeurParNoeud(arbre.inf,n2+1)
+        n2 = ProfondeurParNoeud(arbre.inf,n2+1)
 
     if arbre.sup is not None:
-        n3 += ProfondeurParNoeud(arbre.sup,n3+1)
+        n3 = ProfondeurParNoeud(arbre.sup,n3+1)
 
     return n1+n2+n3
 
@@ -210,4 +237,11 @@ print( "Nombre de noeuds dans l'arbre: " + str(ComptageNoeuds(arbre)) )
 print( "Hauteur de l'arbre: " + str(Hauteur(arbre)) )
 
 print( "Profondeur moyenne de l'arbre: " + str(ProfondeurMoyenne(arbre)) )
-print arbre.print_hybrid_trie()
+
+liste = ListerMots(arbre)
+#print liste
+for word in liste[0:]:
+    print word
+
+
+#print arbre.print_hybrid_trie()
