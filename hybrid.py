@@ -19,29 +19,22 @@ def ComptageMots(node):
     return node.compte_mots(0)
 
 def ListerMots(arbre):
-    tmp=[]
-    liste=ListeUnMot(arbre,"",tmp)
+    liste=ListeUnMot(arbre,"")
     return sorted(liste);
 
-def ListeUnMot(arbre,word,liste):
-
+def ListeUnMot(arbre,word):
+    liste = []
     if arbre.value == hybrid_structure.end_of_word:
-        #print word
-        if arbre.inf is not None:
-            ListeUnMot(arbre.inf,word,liste)
-        if arbre.sup is not None:
-            ListeUnMot(arbre.sup,word,liste)
         liste.append(word)
 
     if arbre.eq is not None:
-        word += arbre.value
-        ListeUnMot(arbre.eq,word,liste)
+        liste += ListeUnMot(arbre.eq,word + arbre.value)
         
     if arbre.inf is not None:
-        ListeUnMot(arbre.inf,word[0:-1],liste)
+        liste += ListeUnMot(arbre.inf,word)
 
     if arbre.sup is not None:
-        ListeUnMot(arbre.sup,word[0:-1],liste)
+        liste += ListeUnMot(arbre.sup,word)
     
     return liste
 
