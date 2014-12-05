@@ -53,8 +53,13 @@ class Node():
         if len(word) == 0:
             if self.value == end_of_word:
                 return
-            elif self.eq is None :
-                self.eq = Node(end_of_word, None, None, None)
+            
+            # On ne veut jamais ajouter dans self.eq
+            # Heuresement il n'est jamais nul si value != EOW
+            
+            #elif self.eq is None :
+            #    self.eq = Node(end_of_word, None, None, None)
+            
             elif self.inf is None:
                 self.inf = Node(end_of_word, None, None, None)
             else:
