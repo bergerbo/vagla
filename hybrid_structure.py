@@ -85,13 +85,97 @@ class Node():
                 self.sup.add_word(word)
 
 
-    def del_word(self,word):
-        if has_word(word) == False:
-            return
+    def del_word2(self,word):
+        tete = self
+        print tete.value
+        while len(word) > 0:
+            print word
+            if word[0] == self.value:
+                if self.eq is not None:
+                    word = word[1:]
+                    if self.inf is not None or self.sup is not None:
+                        tete = self
+                    self = self.eq
+                    if tete is not None:
+                        print tete.value
+                    
+                else:
+                    return False
+
+            elif word[0] < self.value:
+                if self.inf is not None:
+                    self = self.inf
+                    tete = self
+                else:
+                    return False
+
+            elif word[0] > self.value:
+                if self.sup is not None:
+                    self = self.sup
+                    tete = self
+                else:
+                    return False
+
+        print("tete : "+str(tete.value))
+        del tete
+        tete = None
+        return True
 
 
+    def del_word(self,word,tete = None):
+        
 
+        if len(word) == 0:
+            print tete.value
+            tete = None
 
+        elif word[0] == self.value:
+            if self.inf is not None or self.sup is not None:
+                tete = self.eq
+            self.eq.del_word(word[1:],tete)
+
+        elif word[0] < self.value:
+            tete = self.inf
+            self.inf.del_word(word,tete)
+        elif word[0] > self.value:
+            tete = self.sup
+            self.sup.del_word(word,tete)
+        return True
+
+    def del_nodes(self):
+
+        print self.value
+        print "ici"
+        if self.eq is not None:
+            self.eq.del_nodes()
+        del self
+        return 
+
+    def prefixe(self, word, total=0):
+
+        if len(word) == 0:
+            total += self.compte_mots(0)
+
+        else:
+            if word[0] == self.value:
+                if self.eq is not None :
+                    total += self.eq.prefixe(word[1:],total)
+                else:
+                    return total
+
+            elif word[0] < self.value:
+                if self.inf is not None :
+                    total += self.inf.prefixe(word,total)
+                else:
+                    return total
+
+            elif word[0] > self.value:
+                if self.sup is not None:
+                    total += self.sup.prefixe(word,total)
+                else:
+                    return total
+
+        return total
 
     def print_hybrid_trie(self, depth=0):
         ret = ""
@@ -125,4 +209,3 @@ class Node():
             cpt += self.sup.compte_mots(cpt)
 
         return cpt
-            

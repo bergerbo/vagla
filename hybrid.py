@@ -1,4 +1,5 @@
 import hybrid_structure
+import time
 
 def Exemple_de_Base():
     chaine = "A quel genial professeur de dactylographie sommes nous redevables de la superbe phrase ci dessous, un modele du genre, que tout dactylo connait par coeur puisque elle fait appel a chacune des touches du clavier de la machine a ecrire ?"
@@ -99,15 +100,20 @@ def ProfondeurMoyenne(arbre):
     return round(float(ProfondeurParNoeud(arbre,0))/float(ComptageNoeuds(arbre)),3)
 
 
-def OccurenceMot(arbre, word):
-    taille = len(word)
+def Prefixe(arbre,word):
+    return arbre.prefixe(word)
 
+def Supprimer(arbre,word):
+    arbre.del_word(word)
 
+# arbre = Exemple_de_Base()
 
-
-arbre = Exemple_de_Base()
-
-print arbre.has_word("quel")
+fichier = open("shakespear/fic.txt","r")
+avant = time.clock()
+arbre = hybrid_structure.build_nodes(fichier.readline())
+for ligne in fichier:
+        arbre.add_word(ligne)
+print 'Time execution : ',time.clock() - avant,' secondes'
 
 print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
 
@@ -121,10 +127,21 @@ print( "ProfondeurParNoeud: " + str(ProfondeurParNoeud(arbre,0)) )
 
 print( "Profondeur moyenne de l'arbre: " + str(ProfondeurMoyenne(arbre)) )
 
-liste = ListerMots(arbre)
+word = "dactylo"
+
+print( "Occurence prefixe \""+word+"\": " + str(Prefixe(arbre,word )) )
+
+print arbre.has_word(word)
+
+Supprimer(arbre,word)
+
+#print arbre.has_word(word)
+
+print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
+#liste = ListerMots(arbre)
 #print liste
 #for word in liste[0:]:
- #   print word
+#    print word
 
 
-print arbre.print_hybrid_trie()
+#print arbre.print_hybrid_trie()
