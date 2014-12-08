@@ -113,31 +113,48 @@ avant = time.clock()
 arbre = hybrid_structure.build_nodes(fichier.readline())
 for ligne in fichier:
         arbre.add_word(ligne)
-print 'Time execution : ',time.clock() - avant,' secondes'
+print 'Time execution : ',time.clock() - avant,' secondes\n'
 
+avant = time.clock()
 print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
+print 'Time execution comptage mot : ',time.clock()*1000 - avant*1000,' microseconds\n'
 
+avant = time.clock()
 print( "Nombre de Nil dans l'arbre: " + str(ComptageNil(arbre)) )
+print 'Time execution nombre de null: ',time.clock()*1000 - avant*1000,' microseconds\n'
 
+avant = time.clock()
 print( "Nombre de noeuds dans l'arbre: " + str(ComptageNoeuds(arbre)) )
+print 'Time execution nombre de noeuds: ',time.clock()*1000 - avant*1000,' microseconds\n'
 
+avant = time.clock()
 print( "Hauteur de l'arbre: " + str(Hauteur(arbre)) )
+print 'Time execution hauteur : ',time.clock()*1000 - avant*1000,' microseconds \n'
 
-print( "ProfondeurParNoeud: " + str(ProfondeurParNoeud(arbre,0)) )
+# print( "ProfondeurParNoeud: " + str(ProfondeurParNoeud(arbre,0)) )
 
+avant = time.clock()
 print( "Profondeur moyenne de l'arbre: " + str(ProfondeurMoyenne(arbre)) )
+print 'Time execution profondeur moyenne: ',time.clock()*1000 - avant*1000,' microseconds\n'
 
-word = "dactylo"
+word = "th"
 
+avant = time.clock()
 print( "Occurence prefixe \""+word+"\": " + str(Prefixe(arbre,word )) )
+print 'Time execution prefixe: ',time.clock()*1000 - avant*1000,' microseconds\n'
 
-print arbre.has_word(word)
+word = ""
+avant = time.clock()
+print( "ajouter un long mot \""+word+"\": " + str(arbre.add_word(word) ))
+print 'Time ajouter un mot: ',time.clock()*1000 - avant*1000,' microseconds\n'
 
-Supprimer(arbre,word)
+# print arbre.has_word(word)
+
+# Supprimer(arbre,word)
 
 #print arbre.has_word(word)
 
-print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
+# print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
 #liste = ListerMots(arbre)
 #print liste
 #for word in liste[0:]:
