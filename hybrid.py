@@ -155,10 +155,12 @@ print 'Time ajouter un mot: ',time.clock()*1000 - avant*1000,' microseconds\n'
 #print arbre.has_word(word)
 
 # print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
-#liste = ListerMots(arbre)
-#print liste
-#for word in liste[0:]:
-#    print word
 
+avant = time.clock()
+liste = ListerMots(arbre)
+#print liste
+for word in liste[0:]:
+    print word
+print 'Time lister les mots: ',time.clock()*1000 - avant*1000,' microseconds\n'
 
 #print arbre.print_hybrid_trie()
