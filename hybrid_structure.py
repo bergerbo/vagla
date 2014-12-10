@@ -98,7 +98,7 @@ class Node():
                     self = self.eq
                     if tete is not None:
                         print tete.value
-                    
+
                 else:
                     return False
 
@@ -123,7 +123,6 @@ class Node():
 
 
     def del_word(self,word,tete = None):
-        
 
         if len(word) == 0:
             print tete.value

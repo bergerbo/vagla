@@ -1,5 +1,7 @@
 import hybrid_structure
 import time
+from os import listdir
+from os.path import isfile, join
 
 def Exemple_de_Base():
     chaine = "A quel genial professeur de dactylographie sommes nous redevables de la superbe phrase ci dessous, un modele du genre, que tout dactylo connait par coeur puisque elle fait appel a chacune des touches du clavier de la machine a ecrire ?"
@@ -94,7 +96,7 @@ def ProfondeurParNoeud(arbre,n):
         return 0
 
     return n + ProfondeurParNoeud(arbre.eq,n+1) + ProfondeurParNoeud(arbre.inf,n+1) + ProfondeurParNoeud(arbre.sup,n+1)
-    
+
 
 def ProfondeurMoyenne(arbre):
     return round(float(ProfondeurParNoeud(arbre,0))/float(ComptageNoeuds(arbre)),3)
@@ -108,12 +110,44 @@ def Supprimer(arbre,word):
 
 # arbre = Exemple_de_Base()
 
-fichier = open("shakespear/fic.txt","r")
-avant = time.clock()
-arbre = hybrid_structure.build_nodes(fichier.readline())
-for ligne in fichier:
-        arbre.add_word(ligne)
-print 'Time execution : ',time.clock() - avant,' secondes\n'
+
+def Shakespeare():
+
+    path = "./Shakespeare/"
+    onlyfiles = [ f for f in listdir(path) if isfile(join(path,f)) ]
+
+    list = []
+
+    for filename in onlyfiles :
+
+        file = open(path+filename,'r')
+        string = file.read()
+
+        list += string.split("\n")
+
+
+    while "" in list : list.remove("")
+
+
+    ts = time.clock()
+    arbre = hybrid_structure.build_nodes(list[0])
+
+    for word in list[1:] :
+        arbre.add_word(word)
+    te = time.clock()
+
+    print 'Construction de la structure en :',1000*(te - ts),' milliseconds'
+
+    return arbre
+
+#fichier = open("shakespear/fic.txt","r")
+#avant = time.clock()
+#arbre = hybrid_structure.build_nodes(fichier.readline())
+#for ligne in fichier:
+#        arbre.add_word(ligne)
+#print 'Time execution : ',time.clock() - avant,' secondes\n'
+
+arbre = Shakespeare()
 
 avant = time.clock()
 print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))

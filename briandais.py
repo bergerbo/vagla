@@ -1,5 +1,8 @@
 import briandais_struct
 import briandais_visitors
+import time
+from os import listdir
+from os.path import isfile, join
 
 def Recherche(arbre, mot):
     v = briandais_visitors.SearchVisitor(mot)
@@ -12,9 +15,8 @@ def ComptageMots(arbre):
     return v.cpt
 
 def ListeMots(arbre):
-    v = briandais_visitors.ListVisitor()
-    v.visit_child(arbre)
-    return sorted(v.list, key=str.lower)
+    list = arbre.list_words()
+    return sorted(list, key=str.lower)
 
 def ComptageNil(arbre):
     v = briandais_visitors.NilVisitor()
@@ -51,10 +53,42 @@ def ExampleBase():
         node.add_word(word)
     return node
 
-arbre = ExampleBase()
+def Shakespeare():
+
+    path = "./Shakespeare/"
+    onlyfiles = [ f for f in listdir(path) if isfile(join(path,f)) ]
+
+    list = []
+
+    for filename in onlyfiles :
+
+        file = open(path+filename,'r')
+        string = file.read()
+
+        list += string.split("\n")
+
+
+    while "" in list : list.remove("")
+
+
+    ts = time.clock()
+    arbre = briandais_struct.build_nodes(list[0])
+
+    for word in list[1:] :
+        arbre.add_word(word)
+    te = time.clock()
+    
+    print 'Construction de la structure en :',1000*(te - ts),' milliseconds'
+
+    return arbre
+
+arbre = Shakespeare()
+
+cpt = ComptageMots(arbre)
+print cpt
 
 liste = ListeMots(arbre)
-print liste
+#print liste
 
 arbre2 = briandais_struct.clone(arbre)
 
@@ -67,10 +101,10 @@ for mot in liste :
 liste = ListeMots(arbre)
 liste2 = ListeMots(arbre2)
 
-print liste
-print liste2
+#print liste
+#print liste2
 
 arbre3 = briandais_struct.fuse_trees(arbre,arbre2)
 
 liste3 = ListeMots(arbre3)
-print liste3
+#print liste3
