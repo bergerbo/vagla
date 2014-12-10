@@ -16,7 +16,7 @@ def fuse_trees(node, into):
     value = into.value
     child = None
     sibling = None
-    
+
     if node.value == into.value :
         if node.child is not None :
             if into.child is not None :
@@ -25,8 +25,8 @@ def fuse_trees(node, into):
                 child = clone(node.child)
         else :
             child = clone(into.child)
-        
-        
+
+
         if node.sibling is not None :
             if into.sibling is not None :
                 sibling = fuse_trees(node.sibling,into.sibling)
@@ -34,14 +34,14 @@ def fuse_trees(node, into):
                 sibling = clone(node.sibling)
         else :
             sibling = clone(into.sibling)
-    
+
     else :
         child = clone(into.child)
         if into.sibling is not None :
             sibling = fuse_trees(node,into.sibling)
         else :
             sibling = clone(node);
-    
+
     return Node(value,sibling,child)
 
 class Node():
@@ -72,6 +72,36 @@ class Node():
         else :
             self.sibling.add_word(word)
 
+    def has_word(self, word):
+        if len(word) == 0 :
+            if self.value == end_of_word :
+                return True
+
+        elif word[0] == self.value :
+            if self.child is not None :
+                return self.child.has_word(word[1:])
+            return False
+
+        if self.sibling is not None :
+            return self.sibling.has_word(word)
+
+        return False
+
+
+    def list_words(self, prefix = ""):
+        list = []
+
+        if self.value == end_of_word :
+            list.append(prefix)
+
+        if self.child is not None :
+            list += self.child.list_words(prefix + self.value)
+
+        if self.sibling is not None :
+            list += self.sibling.list_words(prefix)
+
+        return list
+
     def accept(self,visitor):
         if self.value == end_of_word :
             visitor.eow(self)
@@ -81,7 +111,7 @@ class Node():
         if self.sibling is not None :
             visitor.visit_sibling(self.sibling)
             visitor.after_visit_sibling(self)
-            
+
     def suppress_word(self,word) :
         if len(word) == 0 :
             if self.value == end_of_word :
@@ -103,7 +133,7 @@ class Node():
         elif self.sibling is None :
             return {'found': False, 'suppressed': False}
 
-        
+
         state = self.sibling.suppress_word(word)
         if state['found'] is True and state['suppressed'] is False :
             self.sibling = self.sibling.sibling
