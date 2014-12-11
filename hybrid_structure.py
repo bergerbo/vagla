@@ -6,6 +6,25 @@ def build_nodes(word):
     else:
         return Node(word[0], None, build_nodes(word[1:]), None)
 
+def insert(node,into):
+    if node.value == into.value :
+        if into.eq is None :
+            into.eq = node.eq
+        elif node.eq is not None :
+            insert(node.eq, into.eq)
+
+    if node.value > into.value :
+        if into.sup is None :
+            into.sup = node
+        else :
+            insert(node,into.sup)
+
+    if node.value < into.value :
+        if into.inf is None :
+            into.inf = node
+        else :
+            insert(node,into.inf)
+
 
 class Node():
 
@@ -20,10 +39,7 @@ class Node():
             if self.value == end_of_word :
                 return True
             elif self.inf is not None:
-                if self.inf.value == end_of_word:
-                    return True
-                else:
-                    return False
+                return self.inf.has_word(word)
             else:
                 return False
 
@@ -34,7 +50,7 @@ class Node():
                 return self.eq.has_word(word[1:])
 
         elif self.value > word[0]:
-            if self.inf is None :
+            if self.inf is None:
                 return False 
             else: 
                 return self.inf.has_word(word)
@@ -85,70 +101,84 @@ class Node():
 
     def del_word(self,word):
 
-        if len(word) == 0:
-            #print "len 0"
-            return {'found': True, 'suppressed': False}
+        if len(word) == 0 :
+            if self.value == end_of_word : 
+                return {'found': True, 'deleted': False}
+            elif self.inf is not None :
+                state =  self.inf.del_word(word)
+                if state['found'] == True and state['deleted'] == False :
+                    if self.inf.sup is None and self.inf.inf is None :
+                        self.inf = None
+                        state['deleted'] = True
+                    else :
+                        inf = self.inf
+                        self.inf = inf.sup
+                        if self.inf is None :
+                            self.inf = inf.inf
+                        elif inf.inf is not None :
+                            insert(inf.inf,self.inf)
+                        state['deleted'] = True
+            else :
+                return {'found': False, 'deleted': False}
+
 
         elif self.value == word[0]:
             if self.eq is not None:
-                state = self.eq.del_word(word[1:])             
+                state = self.eq.del_word(word[1:])
+                if state['found'] == True and state['deleted'] == False :
+                    if self.eq.sup is None and self.eq.inf is None :
+                        self.eq = None
+                    else :
+                        eq = self.eq
+                        self.eq = eq.sup
+                        if self.eq is None :
+                            self.eq = eq.inf
+                        elif eq.inf is not None :
+                            insert(eq.inf,self.eq)
+                        
+                        if self.eq is not None :
+                            state['deleted'] = True
+                    
             else:
-                return {'found': False, 'suppressed': False}
+                return {'found': False, 'deleted': False}
 
         elif self.value > word[0]:
             if self.inf is not None :
                 state = self.inf.del_word(word)
+                if state['found'] == True and state['deleted'] == False :
+                    if self.inf.sup is None and self.inf.inf is None :
+                        self.inf = None
+                        state['deleted'] = True
+                    else :
+                        inf = self.inf
+                        self.inf = inf.sup
+                        if self.inf is None :
+                            self.inf = inf.inf
+                        elif inf.inf is not None :
+                            insert(inf.inf,self.inf)
+                        state['deleted'] = True
             else: 
-                return {'found': False, 'suppressed': False}
+                return {'found': False, 'deleted': False}
 
         elif self.value < word[0]:
             if self.sup is not None:
                 state = self.sup.del_word(word)
+                if state['found'] == True and state['deleted'] == False :
+                    if self.sup.sup is None and self.sup.inf is None :
+                        self.sup = None
+                        state['deleted'] = True
+                    else :
+                        sup = self.sup
+                        self.sup = sup.sup
+                        if self.sup is None :
+                            self.sup = sup.inf
+                        elif sup.inf is not None :
+                            insert(sup.inf,self.sup)
+                        state['deleted'] = True
             else :
-                return {'found': False, 'suppressed': False}
+                return {'found': False, 'deleted': False}
 
-        #print state
-        if state['found'] is True and state['suppressed'] is True :
-            return {'found': True, 'suppressed': True}
-        elif self.eq is not None:
-            if self.eq.value == end_of_word:
-                if self.eq.inf is None:
-                    if state['found'] is True and state['suppressed'] is False :    
-                        self.eq = None
-                        return {'found': True, 'suppressed': True}
-                    else:
-                        self.eq = self.eq.inf
-                        {'found': True, 'suppressed': True}
-            elif self.inf is not None:
-                if self.inf.value == end_of_word:
-                    if state['found'] is True and state['suppressed'] is False :    
-                        self.inf = None
-                        return {'found': True, 'suppressed': True}
-
-            elif self.sup is None:
-                if state['found'] is True and state['suppressed'] is False :
-                    self = None
-                    return {'found': True, 'suppressed': False}
-
-            else:
-                if state['found'] is True and state['suppressed'] is False :
-                    self = self.sup
-                    return {'found': True, 'suppressed': True}
-
-        elif self.inf is not None:
-            if state['found'] is True and state['suppressed'] is False :
-                self = self.inf
-                return {'found': True, 'suppressed': True}
-        elif self.sup is not None:
-            if state['found'] is True and state['suppressed'] is False :
-                self = self.sup
-                return {'found': True, 'suppressed': True}
-
-        else:
-            if state['found'] is True and state['suppressed'] is False :
-                self = None
-                return {'found': True, 'suppressed': False}
-
+        return state
 
     def prefixe(self, word, total=0):
 

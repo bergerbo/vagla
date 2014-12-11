@@ -106,8 +106,7 @@ def Prefixe(arbre,word):
     return arbre.prefixe(word)
 
 def Supprimer(arbre,word):
-    if arbre.has_word(word) is True:
-        arbre.del_word(word)
+    arbre.del_word(word)
 
 
 # arbre = Exemple_de_Base()
@@ -212,3 +211,14 @@ print 'Time execution comptage mot : ',time.clock()*1000 - avant*1000,' millisec
 avant = time.clock()
 liste = ListerMots(arbre)
 print 'Time Construire liste des mots: ',time.clock()*1000 - avant*1000,' millisecondes\n'
+print len(liste)
+
+avant = time.clock()
+cpt = 0
+for mot in liste :
+    if liste.index(mot) % 2 == 0 :
+        Supprimer(arbre,mot)
+        cpt += 1
+print cpt
+print 'Time supprimer la moitier des mots: ',time.clock()*1000 - avant*1000,' millisecondes\n'
+print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
