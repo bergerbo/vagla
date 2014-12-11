@@ -6,6 +6,25 @@ def build_nodes(word):
     else:
         return Node(word[0], None, build_nodes(word[1:]), None)
 
+def insert(node,into):
+    if node.value == into.value :
+        if into.eq is None :
+            into.eq = node.eq
+        elif node.eq is not None :
+            insert(node.eq, into.eq)
+
+    if node.value > into.value :
+        if into.sup is None :
+            into.sup = node
+        else :
+            insert(node,into.sup)
+
+    if node.value < into.value :
+        if into.inf is None :
+            into.inf = node
+        else :
+            insert(node,into.inf)
+
 
 class Node():
 
@@ -18,35 +37,30 @@ class Node():
     def has_word(self, word):
         if len(word) == 0:
             if self.value == end_of_word :
-                print True
                 return True
             elif self.inf is not None:
-                if self.inf.value == end_of_word:
-                    print True
-                    return True
-                else:
-                    print False
-                    return False
+                return self.inf.has_word(word)
             else:
-                print False
                 return False
 
         elif self.value == word[0]:
-            self.eq.has_word(word[1:])
+            if self.eq is None:
+                return False
+            else:
+                return self.eq.has_word(word[1:])
 
         elif self.value > word[0]:
-            if self.inf is None :
-                print False
+            if self.inf is None:
                 return False 
             else: 
-                self.inf.has_word(word)
+                return self.inf.has_word(word)
 
         elif self.value < word[0]:
             if self.sup is None:
-                print False
                 return False 
             else :
-                self.sup.has_word(word)
+                return self.sup.has_word(word)
+
 
     def add_word(self,word):
         #print word
@@ -85,70 +99,86 @@ class Node():
                 self.sup.add_word(word)
 
 
-    def del_word2(self,word):
-        tete = self
-        print tete.value
-        while len(word) > 0:
-            print word
-            if word[0] == self.value:
-                if self.eq is not None:
-                    word = word[1:]
-                    if self.inf is not None or self.sup is not None:
-                        tete = self
-                    self = self.eq
-                    if tete is not None:
-                        print tete.value
+    def del_word(self,word):
 
-                else:
-                    return False
-
-            elif word[0] < self.value:
-                if self.inf is not None:
-                    self = self.inf
-                    tete = self
-                else:
-                    return False
-
-            elif word[0] > self.value:
-                if self.sup is not None:
-                    self = self.sup
-                    tete = self
-                else:
-                    return False
-
-        print("tete : "+str(tete.value))
-        del tete
-        tete = None
-        return True
+        if len(word) == 0 :
+            if self.value == end_of_word : 
+                return {'found': True, 'deleted': False}
+            elif self.inf is not None :
+                state =  self.inf.del_word(word)
+                if state['found'] == True and state['deleted'] == False :
+                    if self.inf.sup is None and self.inf.inf is None :
+                        self.inf = None
+                        state['deleted'] = True
+                    else :
+                        inf = self.inf
+                        self.inf = inf.sup
+                        if self.inf is None :
+                            self.inf = inf.inf
+                        elif inf.inf is not None :
+                            insert(inf.inf,self.inf)
+                        state['deleted'] = True
+            else :
+                return {'found': False, 'deleted': False}
 
 
-    def del_word(self,word,tete = None):
+        elif self.value == word[0]:
+            if self.eq is not None:
+                state = self.eq.del_word(word[1:])
+                if state['found'] == True and state['deleted'] == False :
+                    if self.eq.sup is None and self.eq.inf is None :
+                        self.eq = None
+                    else :
+                        eq = self.eq
+                        self.eq = eq.sup
+                        if self.eq is None :
+                            self.eq = eq.inf
+                        elif eq.inf is not None :
+                            insert(eq.inf,self.eq)
+                        
+                        if self.eq is not None :
+                            state['deleted'] = True
+                    
+            else:
+                return {'found': False, 'deleted': False}
 
-        if len(word) == 0:
-            print tete.value
-            tete = None
+        elif self.value > word[0]:
+            if self.inf is not None :
+                state = self.inf.del_word(word)
+                if state['found'] == True and state['deleted'] == False :
+                    if self.inf.sup is None and self.inf.inf is None :
+                        self.inf = None
+                        state['deleted'] = True
+                    else :
+                        inf = self.inf
+                        self.inf = inf.sup
+                        if self.inf is None :
+                            self.inf = inf.inf
+                        elif inf.inf is not None :
+                            insert(inf.inf,self.inf)
+                        state['deleted'] = True
+            else: 
+                return {'found': False, 'deleted': False}
 
-        elif word[0] == self.value:
-            if self.inf is not None or self.sup is not None:
-                tete = self.eq
-            self.eq.del_word(word[1:],tete)
+        elif self.value < word[0]:
+            if self.sup is not None:
+                state = self.sup.del_word(word)
+                if state['found'] == True and state['deleted'] == False :
+                    if self.sup.sup is None and self.sup.inf is None :
+                        self.sup = None
+                        state['deleted'] = True
+                    else :
+                        sup = self.sup
+                        self.sup = sup.sup
+                        if self.sup is None :
+                            self.sup = sup.inf
+                        elif sup.inf is not None :
+                            insert(sup.inf,self.sup)
+                        state['deleted'] = True
+            else :
+                return {'found': False, 'deleted': False}
 
-        elif word[0] < self.value:
-            tete = self.inf
-            self.inf.del_word(word,tete)
-        elif word[0] > self.value:
-            tete = self.sup
-            self.sup.del_word(word,tete)
-        return True
-
-    def del_nodes(self):
-
-        print self.value
-        print "ici"
-        if self.eq is not None:
-            self.eq.del_nodes()
-        del self
-        return 
+        return state
 
     def prefixe(self, word, total=0):
 

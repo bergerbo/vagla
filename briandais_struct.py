@@ -185,39 +185,35 @@ class Node():
         if self.sibling is not None :
             visitor.after_visit_sibling(self)
 
-    def suppress_word(self,word) :
+    def delete_word(self,word) :
 
         if len(word) == 0 :
-
             if self.value == end_of_word :
-                return {'found': True, 'suppressed': False}
+                return {'found': True, 'deleted': False}
 
             elif self.sibling is None :
-                return {'found': False, 'suppressed': False}
+                return {'found': False, 'deleted': False}
 
         elif word[0:1] == self.value :
-
             if self.child is None :
-                return {'found': False, 'suppressed': False}
+                return {'found': False, 'deleted': False}
 
             else :
-                state = self.child.suppress_word(word[1:])
-
-                if state['found'] is True and state['suppressed'] is False :
+                state = self.child.delete_word(word[1:])
+                if state['found'] is True and state['deleted'] is False :
                     self.child = self.child.sibling
 
                     if self.child is not None :
-                        state['suppressed'] = True
+                        state['deleted'] = True
+
                 return state
 
         elif self.sibling is None :
-            return {'found': False, 'suppressed': False}
+            return {'found': False, 'deleted': False}
 
-
-        state = self.sibling.suppress_word(word)
-
-        if state['found'] is True and state['suppressed'] is False :
+        state = self.sibling.delete_word(word)
+        if state['found'] is True and state['deleted'] is False :
             self.sibling = self.sibling.sibling
-            state['suppressed'] = True
+            state['deleted'] = True
 
         return state

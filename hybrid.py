@@ -21,7 +21,7 @@ def Recherche(node, word):
 def ComptageMots(node):
     return node.compte_mots(0)
 
-def ListerMots(arbre):
+def ListeMots(arbre):
     liste=ListeUnMot(arbre,"")
     return sorted(liste);
 
@@ -105,8 +105,9 @@ def ProfondeurMoyenne(arbre):
 def Prefixe(arbre,word):
     return arbre.prefixe(word)
 
-def Supprimer(arbre,word):
+def Suppression(arbre,word):
     arbre.del_word(word)
+
 
 # arbre = Exemple_de_Base()
 
@@ -136,7 +137,7 @@ def Shakespeare():
         arbre.add_word(word)
     te = time.clock()
 
-    print 'Construction de la structure en :',1000*(te - ts),' milliseconds'
+    print 'Construction de la structure en :',1000*(te - ts),' millisecondes'
 
     return arbre
 
@@ -150,49 +151,74 @@ def Shakespeare():
 arbre = Shakespeare()
 
 avant = time.clock()
-print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
-print 'Time execution comptage mot : ',time.clock()*1000 - avant*1000,' microseconds\n'
+
+print 'Nombre de mots dans l\'arbre: ',str(ComptageMots(arbre)),'en : ',time.clock()*1000 - avant*1000,' millisecondes\n'
 
 avant = time.clock()
 print( "Nombre de Nil dans l'arbre: " + str(ComptageNil(arbre)) )
-print 'Time execution nombre de null: ',time.clock()*1000 - avant*1000,' microseconds\n'
+print 'Time execution nombre de null: ',time.clock()*1000 - avant*1000,' millisecondes\n'
 
-avant = time.clock()
-print( "Nombre de noeuds dans l'arbre: " + str(ComptageNoeuds(arbre)) )
-print 'Time execution nombre de noeuds: ',time.clock()*1000 - avant*1000,' microseconds\n'
+# avant = time.clock()
+# print( "Nombre de noeuds dans l'arbre: " + str(ComptageNoeuds(arbre)) )
+# print 'Time execution nombre de noeuds: ',time.clock()*1000 - avant*1000,' millisecondes\n'
 
 avant = time.clock()
 print( "Hauteur de l'arbre: " + str(Hauteur(arbre)) )
-print 'Time execution hauteur : ',time.clock()*1000 - avant*1000,' microseconds \n'
-
-# print( "ProfondeurParNoeud: " + str(ProfondeurParNoeud(arbre,0)) )
+print 'Time execution hauteur : ',time.clock()*1000 - avant*1000,' millisecondes \n'
 
 avant = time.clock()
 print( "Profondeur moyenne de l'arbre: " + str(ProfondeurMoyenne(arbre)) )
-print 'Time execution profondeur moyenne: ',time.clock()*1000 - avant*1000,' microseconds\n'
+print 'Time execution profondeur moyenne: ',time.clock()*1000 - avant*1000,' millisecondes\n'
 
-word = "th"
+word = "thfthhjffhjf"
 
 avant = time.clock()
 print( "Occurence prefixe \""+word+"\": " + str(Prefixe(arbre,word )) )
-print 'Time execution prefixe: ',time.clock()*1000 - avant*1000,' microseconds\n'
+print 'Time execution prefixe: ',time.clock()*1000 - avant*1000,' millisecondes\n'
 
-word = ""
+word = "machinerie"
 avant = time.clock()
 print( "ajouter un long mot \""+word+"\": " + str(arbre.add_word(word) ))
-print 'Time ajouter un mot: ',time.clock()*1000 - avant*1000,' microseconds\n'
+print 'Time ajouter un mot: ',time.clock()*1000 - avant*1000,' millisecondes\n'
+
+avant = time.clock()
+print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
+print 'Time execution comptage mot : ',time.clock()*1000 - avant*1000,' millisecondes\n'
+
+word = "jessica"
+avant = time.clock()
+print( "Chercher "+word+" : " + str(arbre.has_word(word)) )
+print 'Time execution trouver un mot: ',time.clock()*1000 - avant*1000,' millisecondes\n'
+
+avant = time.clock()
+print( "supprimer \""+word+"\": ")
+Suppression(arbre,word)
+print 'Time supprimer: ',time.clock()*1000 - avant*1000,' millisecondes\n'
+
+avant = time.clock()
+print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
+print 'Time execution comptage mot : ',time.clock()*1000 - avant*1000,' millisecondes\n'
+
 
 # print arbre.has_word(word)
 
 # Supprimer(arbre,word)
 
-#print arbre.has_word(word)
+# print str(arbre.has_word(word))
 
 # print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
-#liste = ListerMots(arbre)
-#print liste
-#for word in liste[0:]:
-#    print word
 
+avant = time.clock()
+liste = ListeMots(arbre)
+print 'Time Construire liste des mots: ',time.clock()*1000 - avant*1000,' millisecondes\n'
+print len(liste)
 
-#print arbre.print_hybrid_trie()
+avant = time.clock()
+cpt = 0
+for mot in liste :
+    if liste.index(mot) % 2 == 0 :
+        Suppression(arbre,mot)
+        cpt += 1
+print cpt
+print 'Time supprimer la moitier des mots: ',time.clock()*1000 - avant*1000,' millisecondes\n'
+print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
