@@ -21,7 +21,7 @@ def Recherche(node, word):
 def ComptageMots(node):
     return node.compte_mots(0)
 
-def ListerMots(arbre):
+def ListeMots(arbre):
     liste=ListeUnMot(arbre,"")
     return sorted(liste);
 
@@ -105,7 +105,7 @@ def ProfondeurMoyenne(arbre):
 def Prefixe(arbre,word):
     return arbre.prefixe(word)
 
-def Supprimer(arbre,word):
+def Suppression(arbre,word):
     arbre.del_word(word)
 
 
@@ -151,16 +151,16 @@ def Shakespeare():
 arbre = Shakespeare()
 
 avant = time.clock()
-print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
-print 'Time execution comptage mot : ',time.clock()*1000 - avant*1000,' millisecondes\n'
+
+print 'Nombre de mots dans l\'arbre: ',str(ComptageMots(arbre)),'en : ',time.clock()*1000 - avant*1000,' millisecondes\n'
 
 avant = time.clock()
 print( "Nombre de Nil dans l'arbre: " + str(ComptageNil(arbre)) )
 print 'Time execution nombre de null: ',time.clock()*1000 - avant*1000,' millisecondes\n'
 
-avant = time.clock()
-print( "Nombre de noeuds dans l'arbre: " + str(ComptageNoeuds(arbre)) )
-print 'Time execution nombre de noeuds: ',time.clock()*1000 - avant*1000,' millisecondes\n'
+# avant = time.clock()
+# print( "Nombre de noeuds dans l'arbre: " + str(ComptageNoeuds(arbre)) )
+# print 'Time execution nombre de noeuds: ',time.clock()*1000 - avant*1000,' millisecondes\n'
 
 avant = time.clock()
 print( "Hauteur de l'arbre: " + str(Hauteur(arbre)) )
@@ -170,7 +170,7 @@ avant = time.clock()
 print( "Profondeur moyenne de l'arbre: " + str(ProfondeurMoyenne(arbre)) )
 print 'Time execution profondeur moyenne: ',time.clock()*1000 - avant*1000,' millisecondes\n'
 
-word = "the"
+word = "thfthhjffhjf"
 
 avant = time.clock()
 print( "Occurence prefixe \""+word+"\": " + str(Prefixe(arbre,word )) )
@@ -192,7 +192,7 @@ print 'Time execution trouver un mot: ',time.clock()*1000 - avant*1000,' millise
 
 avant = time.clock()
 print( "supprimer \""+word+"\": ")
-Supprimer(arbre,word)
+Suppression(arbre,word)
 print 'Time supprimer: ',time.clock()*1000 - avant*1000,' millisecondes\n'
 
 avant = time.clock()
@@ -209,7 +209,7 @@ print 'Time execution comptage mot : ',time.clock()*1000 - avant*1000,' millisec
 # print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
 
 avant = time.clock()
-liste = ListerMots(arbre)
+liste = ListeMots(arbre)
 print 'Time Construire liste des mots: ',time.clock()*1000 - avant*1000,' millisecondes\n'
 print len(liste)
 
@@ -217,7 +217,7 @@ avant = time.clock()
 cpt = 0
 for mot in liste :
     if liste.index(mot) % 2 == 0 :
-        Supprimer(arbre,mot)
+        Suppression(arbre,mot)
         cpt += 1
 print cpt
 print 'Time supprimer la moitier des mots: ',time.clock()*1000 - avant*1000,' millisecondes\n'
