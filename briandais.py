@@ -5,38 +5,28 @@ from os import listdir
 from os.path import isfile, join
 
 def Recherche(arbre, mot):
-    v = briandais_visitors.SearchVisitor(mot)
-    v.visit_child(arbre)
-    return v.found
+    return arbre.has_word(mot)
 
 def ComptageMots(arbre):
-    v =  briandais_visitors.CountVisitor()
-    v.visit_child(arbre)
-    return v.cpt
+    return arbre.cpt_words()
 
 def ListeMots(arbre):
     list = arbre.list_words()
     return sorted(list, key=str.lower)
 
-def ComptageNil(arbre):
-    v = briandais_visitors.NilVisitor()
-    v.visit_child(arbre)
-    return v.cpt
+def ComptageNils(arbre):
+    return arbre.cpt_nils()
 
 def Hauteur(arbre):
-    v = briandais_visitors.HeightVisitor()
-    v.visit_child(arbre)
-    return v.height
+    return arbre.height()
+
 
 def ProfondeurMoyenne(arbre):
-    v = briandais_visitors.AverageDepthVisitor()
-    v.visit_child(arbre)
-    return v.average()
+    data = arbre.avg_depth()
+    return data['sum'] / (float)(data['cpt'])
 
 def Prefixe(arbre,mot):
-    v = briandais_visitors.PrefixCountVisitor(mot)
-    v.visit_child(arbre)
-    return v.cpt
+    return arbre.cpt_prefix(mot)
 
 def Suppression(arbre, mot):
     arbre.suppress_word(mot)
@@ -76,27 +66,63 @@ def Shakespeare():
 
     for word in list[1:] :
         arbre.add_word(word)
+
     te = time.clock()
-    
     print 'Construction de la structure en :',1000*(te - ts),' milliseconds'
 
     return arbre
 
 arbre = Shakespeare()
 
+ts = time.clock()
 cpt = ComptageMots(arbre)
+te = time.clock()
 print cpt
+print 'Comptage Mots en :',1000*(te - ts),' milliseconds'
 
+ts = time.clock()
+cptn = ComptageNils(arbre)
+te = time.clock()
+print cptn
+print 'Comptage Nils en :',1000*(te - ts),' milliseconds'
+
+ts = time.clock()
+h = Hauteur(arbre)
+te = time.clock()
+print h
+print 'Hauteur en :',1000*(te - ts),' milliseconds'
+
+ts = time.clock()
+pm = ProfondeurMoyenne(arbre)
+te = time.clock()
+print pm
+print 'Profondeur moyenne en :',1000*(te - ts),' milliseconds'
+
+ts = time.clock()
+th = Prefixe(arbre,"the")
+te = time.clock()
+print th
+print 'Prefixe the en :',1000*(te - ts),' milliseconds'
+
+ts = time.clock()
 liste = ListeMots(arbre)
-#print liste
+te = time.clock()
+print 'Liste en :',1000*(te - ts),' milliseconds'
 
+ts = time.clock()
 arbre2 = briandais_struct.clone(arbre)
+te = time.clock()
+print 'Clonage en :',1000*(te - ts),' milliseconds'
 
+ts = time.clock()
 for mot in liste :
     if liste.index(mot) % 2 == 0 :
         Suppression(arbre,mot)
     else :
         Suppression(arbre2,mot)
+
+te = time.clock()
+print 'Suppression massive en :',1000*(te - ts),' milliseconds'
 
 liste = ListeMots(arbre)
 liste2 = ListeMots(arbre2)
@@ -104,7 +130,10 @@ liste2 = ListeMots(arbre2)
 #print liste
 #print liste2
 
+ts = time.clock()
 arbre3 = briandais_struct.fuse_trees(arbre,arbre2)
+te = time.clock()
+print 'Fusion en :',1000*(te - ts),' milliseconds'
 
 liste3 = ListeMots(arbre3)
 #print liste3

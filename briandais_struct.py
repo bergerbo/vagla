@@ -102,30 +102,110 @@ class Node():
 
         return list
 
+    def cpt_words(self):
+        cpt = 0
+
+        if self.value == end_of_word :
+            cpt += 1
+
+        if self.child is not None :
+            cpt += self.child.cpt_words()
+
+        if self.sibling is not None :
+            cpt += self.sibling.cpt_words()
+
+        return cpt
+
+    def height(self):
+
+        child_height = 0
+        if self.child is not None :
+            child_height = 1 + self.child.height()
+
+        sibling_height = 0
+        if self.sibling is not None :
+            sibling_height = self.sibling.height()
+
+        return max(child_height,sibling_height)
+
+    def avg_depth(self, depth = 0):
+
+        sum = depth
+        cpt = 1
+
+        if self.child is not None :
+            data = self.child.avg_depth(depth + 1)
+            sum += data['sum']
+            cpt += data['cpt']
+
+        if self.sibling is not None :
+            data = self.sibling.avg_depth(depth)
+            sum += data['sum']
+            cpt += data['cpt']
+
+        return {'sum': sum, 'cpt': cpt}
+
+    def cpt_prefix(self,prefix):
+        cpt = 0
+        if self.value == end_of_word and len(prefix) == 0:
+            cpt += 1
+
+        elif len(prefix) == 0 or prefix[0] == self.value :
+            if self.child is not None :
+                cpt += self.child.cpt_prefix(prefix[1:])
+
+        if self.sibling is not None :
+            cpt += self.sibling.cpt_prefix(prefix)
+
+        return cpt
+
+    def cpt_nils(self):
+        cpt = 0
+
+        if self.child is not None :
+            cpt += self.child.cpt_nils()
+        else :
+            cpt += 1
+
+        if self.sibling is not None :
+            cpt += self.sibling.cpt_nils()
+        else :
+            cpt += 1
+
+        return cpt
+
     def accept(self,visitor):
+
         if self.value == end_of_word :
             visitor.eow(self)
+
         elif self.child is not None :
-            visitor.visit_child(self.child)
             visitor.after_visit_child(self)
+
         if self.sibling is not None :
-            visitor.visit_sibling(self.sibling)
             visitor.after_visit_sibling(self)
 
     def suppress_word(self,word) :
+
         if len(word) == 0 :
+
             if self.value == end_of_word :
                 return {'found': True, 'suppressed': False}
+
             elif self.sibling is None :
                 return {'found': False, 'suppressed': False}
 
         elif word[0:1] == self.value :
+
             if self.child is None :
                 return {'found': False, 'suppressed': False}
+
             else :
                 state = self.child.suppress_word(word[1:])
+
                 if state['found'] is True and state['suppressed'] is False :
                     self.child = self.child.sibling
+
                     if self.child is not None :
                         state['suppressed'] = True
                 return state
@@ -135,7 +215,9 @@ class Node():
 
 
         state = self.sibling.suppress_word(word)
+
         if state['found'] is True and state['suppressed'] is False :
             self.sibling = self.sibling.sibling
             state['suppressed'] = True
+
         return state
