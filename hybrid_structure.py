@@ -25,6 +25,10 @@ def insert(node,into):
         else :
             insert(node,into.inf)
 
+def clone(node) :
+    if node is None :
+        return None
+    return Node(node.value, clone(node.inf), clone(node.eq), clone(node.sup))
 
 class Node():
 

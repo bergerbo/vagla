@@ -77,31 +77,31 @@ arbre = Shakespeare()
 ts = time.clock()
 cpt = ComptageMots(arbre)
 te = time.clock()
-print cpt
+print 'Nombre de mots : ',cpt
 print 'Comptage Mots en :',1000*(te - ts),' milliseconds'
 
 ts = time.clock()
 cptn = ComptageNils(arbre)
 te = time.clock()
-print cptn
+print 'Nombre de Nils : ',cptn
 print 'Comptage Nils en :',1000*(te - ts),' milliseconds'
 
 ts = time.clock()
 h = Hauteur(arbre)
 te = time.clock()
-print h
+print 'Hauteur : ',h
 print 'Hauteur en :',1000*(te - ts),' milliseconds'
 
 ts = time.clock()
 pm = ProfondeurMoyenne(arbre)
 te = time.clock()
-print pm
+print 'Profondeur Moyenne : ',pm
 print 'Profondeur moyenne en :',1000*(te - ts),' milliseconds'
 
 ts = time.clock()
 th = Prefixe(arbre,"the")
 te = time.clock()
-print th
+print 'Prefixe the apparait : ',th
 print 'Prefixe the en :',1000*(te - ts),' milliseconds'
 
 ts = time.clock()
@@ -123,7 +123,8 @@ for mot in liste :
 
 te = time.clock()
 print 'Suppression massive en :',1000*(te - ts),' milliseconds'
-
+print 'Nombre de mots arbre : ',str(ComptageMots(arbre))
+print 'Nombre de mots arbre 2 : ',str(ComptageMots(arbre2))
 liste = ListeMots(arbre)
 liste2 = ListeMots(arbre2)
 
@@ -200,5 +201,5 @@ liste3 = ListeMots(arbre3)
 #         Suppression(arbre,mot)
 #         cpt += 1
 # print cpt
-# print 'Time supprimer la moitier des mots: ',time.clock()*1000 - avant*1000,' millisecondes\n'
+# print 'Time supprimer la moitier des mots: ',time.clock()*1000 - avant*1000,' millisecondes'
 # print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
