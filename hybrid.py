@@ -144,9 +144,9 @@ def Equilibre(arbre):
     print "apres"
 
     if arbre.inf is not None:
-        return Equilibre(arbre.inf)
+        Equilibre(arbre.inf)
     if arbre.sup is not None:
-        return Equilibre(arbre.sup)
+        Equilibre(arbre.sup)
     return arbre
 
 # arbre = Exemple_de_Base()
