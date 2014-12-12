@@ -60,7 +60,6 @@ def Shakespeare():
 
     while "" in list : list.remove("")
 
-
     ts = time.clock()
     arbre = briandais_struct.build_nodes(list[0])
 
@@ -72,6 +71,7 @@ def Shakespeare():
 
     return arbre
 
+print '---- Arbre de la Briandais ----'
 arbre = Shakespeare()
 
 ts = time.clock()
@@ -137,7 +137,8 @@ te = time.clock()
 print 'Fusion en :',1000*(te - ts),' milliseconds'
 
 liste3 = ListeMots(arbre3)
-#print liste3
+print 'Nombre de mots arbre : ',str(ComptageMots(arbre3))
+print liste3
 
 
 

@@ -13,34 +13,24 @@ def clone(node) :
     return Node(node.value, clone(node.sibling), clone(node.child))
 
 def fuse_trees(node, into):
+    if node is None and into is None :
+        return None
+    elif node is None :
+        return clone(into)
+    elif into is None :
+        return clone(node)
+
     value = into.value
     child = None
     sibling = None
 
     if node.value == into.value :
-        if node.child is not None :
-            if into.child is not None :
-                child = fuse_trees(node.child, into.child)
-            else :
-                child = clone(node.child)
-        else :
-            child = clone(into.child)
-
-
-        if node.sibling is not None :
-            if into.sibling is not None :
-                sibling = fuse_trees(node.sibling,into.sibling)
-            else :
-                sibling = clone(node.sibling)
-        else :
-            sibling = clone(into.sibling)
+        child = fuse_trees(node.child, into.child)
+        sibling = fuse_trees(node.sibling,into.sibling)
 
     else :
         child = clone(into.child)
-        if into.sibling is not None :
-            sibling = fuse_trees(node,into.sibling)
-        else :
-            sibling = clone(node);
+        sibling = fuse_trees(node,into.sibling)
 
     return Node(value,sibling,child)
 
@@ -175,15 +165,7 @@ class Node():
         return cpt
 
     def accept(self,visitor):
-
-        if self.value == end_of_word :
-            visitor.eow(self)
-
-        elif self.child is not None :
-            visitor.after_visit_child(self)
-
-        if self.sibling is not None :
-            visitor.after_visit_sibling(self)
+        visitor.visit(self)
 
     def delete_word(self,word) :
 

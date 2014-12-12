@@ -53,14 +53,7 @@ def hybrid_to_briandais(hy) :
     
     if hy.eq is not None :
         node.child = hybrid_to_briandais(hy.eq)
-        
-        
-    add_siblings_into_briandais(node,hy)
-        
-    return node
-
-
-def add_siblings_into_briandais(node, hy) :
+            
     chain1 = None
     chain2 = None
     
@@ -73,8 +66,11 @@ def add_siblings_into_briandais(node, hy) :
     if chain1 is not None :
         node.sibling = chain1
 
-    while node.sibling is not None :
-        node = node.sibling
+    temp_node = node
+    while temp_node.sibling is not None :
+        temp_node = temp_node.sibling
         
     if chain2 is not None :
-        node.sibling = chain2
+        temp_node.sibling = chain2
+        
+    return node

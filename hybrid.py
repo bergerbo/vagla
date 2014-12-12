@@ -224,6 +224,7 @@ def Shakespeare():
 # print( "Nombre de mots dans l'arbre: " + str(ComptageMots(arbre)))
 
 
+print '------  Tries Hybrides  -------'
 arbre = Shakespeare()
 
 ts = time.clock()

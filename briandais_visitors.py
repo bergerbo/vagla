@@ -1,5 +1,15 @@
 class Visitor():
 
+    def visit(self,node):
+        if node.value == end_of_word :
+            self.eow(node)
+
+        elif node.child is not None :
+            self.visit_child(node)
+
+        if node.sibling is not None :
+            self._visit_sibling(node)
+
     def eow(self,node):
         return
 
@@ -8,12 +18,6 @@ class Visitor():
 
     def visit_sibling(self,node):
         node.accept(self)
-    
-    def after_visit_child(self,node):
-        return
-
-    def after_visit_sibling(self,node):
-        return 
 
 class CountVisitor(Visitor):
     def __init__(self):
@@ -62,35 +66,6 @@ class PrefixCountVisitor(MatchingVisitor):
 
     def eow(self, node):
         self.cpt += 1
-
-class SuppressVisitor(MatchingVisitor):
-    def __init__(self,word):
-        MatchingVisitor.__init__(self,word)
-        self.suppressed = True
-
-    def eow(self, node) :
-        if self.word[-1:] == self.prefix[-2:-1] :
-            self.suppressed = False
-
-    def after_visit_child(self, node) :
-        if not self.suppressed :
-            node.child = node.child.sibling
-            if node.child is not None :
-                print self.word
-                print node.value
-                print node.child.value
-                self.suppressed = True 
-
-    def after_visit_sibling(self, node):
-        # Counter intuitive due to the way prefix is built
-        l = len(self.prefix[:-1]) 
-        if not self.suppressed and self.word[l:l+1] != node.value :
-            print self.word
-            print self.prefix
-            print l
-            print node.value
-            node.sibling = node.sibling.sibling
-            self.suppressed = True
 
 class ListVisitor(PrefixVisitor):
     def __init__(self):
