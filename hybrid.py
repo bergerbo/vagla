@@ -81,13 +81,13 @@ def Hauteur(arbre):
     h2 = 0
     h3 = 0
     if arbre.eq is not None:
-        h1 += 1 + Hauteur(arbre.eq)
+        h1 = 1 + Hauteur(arbre.eq)
 
     if arbre.inf is not None:
-        h2 += 1 + Hauteur(arbre.inf)
+        h2 = 1 + Hauteur(arbre.inf)
 
     if arbre.sup is not None:
-        h3 += 1 + Hauteur(arbre.sup)
+        h3 = 1 + Hauteur(arbre.sup)
 
     return max(h1,h2,h3)
 
@@ -244,4 +244,4 @@ print '------  Tries Hybrides  -------'
 
 arbre = Exemple_de_Base()
 
-Equilibre(arbre)
+print Hauteur(arbre)
