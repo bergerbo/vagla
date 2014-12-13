@@ -80,6 +80,7 @@ def Hauteur(arbre):
     h1 = 0
     h2 = 0
     h3 = 0
+
     if arbre.eq is not None:
         h1 = 1 + Hauteur(arbre.eq)
 
@@ -108,8 +109,8 @@ def Prefixe(arbre,word):
 def Suppression(arbre,word):
     arbre.del_word(word)
 
-def Equilibre(arbre):
 
+def Equilibre(arbre):
     if arbre.inf is not None:
         h1 = Hauteur(arbre.inf)
     else:
@@ -120,36 +121,37 @@ def Equilibre(arbre):
     else:
         h2 = 0
 
-    print 'h1 : ',h1
-    print 'h2 : ',h2
-
-    if h1 <= 1 and h2 <= 1:
+    if h1 <= 2 and h2 <= 2:
         return arbre
 
-    if h1>h2:
-        pivot = arbre.inf
-        pivot.sup = arbre
-        if arbre.inf.sup is not None:
-            pivot.sup.inf = arbre.inf.sup
-        else:
-            pivot.sup.inf = None
-        arbre = pivot
-        
-
-    if h2>h1:
-        pivot = arbre.sup
-        pivot.inf = arbre
-        if arbre.sup.inf is not None:
-            pivot.inf.sup = arbre.sup.inf
-        else:
-            pivot.inf.sup = None
-        arbre = pivot
     
     if arbre.inf is not None:
-        arbre.inf = Equilibre(arbre.inf)
+        arbre.inf = hybrid_structure.clone(Equilibre(arbre.inf))
+    if arbre.eq is not None:
+        arbre.eq = hybrid_structure.clone(Equilibre(arbre.eq))
     if arbre.sup is not None:
-        arbre.sup = Equilibre(arbre.sup)
-    return arbre
+        arbre.sup = hybrid_structure.clone(Equilibre(arbre.sup))
+
+
+    if h1>h2+1:
+        pivot = hybrid_structure.clone(arbre.inf)
+        pivot.sup = hybrid_structure.clone(arbre)
+        if arbre.inf.sup is not None:
+            pivot.sup.inf = hybrid_structure.clone(arbre.inf.sup)
+        else:
+            pivot.sup.inf = hybrid_structure.clone(None)
+        return hybrid_structure.clone(pivot)
+        
+    if h2>h1+1:
+        pivot = hybrid_structure.clone(arbre.sup)
+        pivot.inf = hybrid_structure.clone(arbre)
+        if arbre.sup.inf is not None:
+            pivot.inf.sup = hybrid_structure.clone(arbre.sup.inf)
+        else:
+            pivot.inf.sup = hybrid_structure.clone(None)
+        return hybrid_structure.clone(pivot)
+    
+    return hybrid_structure.clone(arbre)
 
 
 
@@ -188,60 +190,65 @@ def Shakespeare():
 
 
 print '------  Tries Hybrides  -------'
-# arbre = Shakespeare()
+arbre = Shakespeare()
 
-# ts = time.clock()
-# cpt = ComptageMots(arbre)
-# te = time.clock()
-# print 'Nombre de mots : ',cpt
-# print 'Comptage Mots en :',1000*(te - ts),' milliseconds'
+ts = time.clock()
+cpt = ComptageMots(arbre)
+te = time.clock()
+print 'Nombre de mots : ',cpt
+print 'Comptage Mots en :',1000*(te - ts),' milliseconds'
 
-# ts = time.clock()
-# cptn = ComptageNils(arbre)
-# te = time.clock()
-# print 'Nombre de Nils : ',cptn
-# print 'Comptage Nils en :',1000*(te - ts),' milliseconds'
+ts = time.clock()
+cptn = ComptageNils(arbre)
+te = time.clock()
+print 'Nombre de Nils : ',cptn
+print 'Comptage Nils en :',1000*(te - ts),' milliseconds'
 
-# ts = time.clock()
-# h = Hauteur(arbre)
-# te = time.clock()
-# print 'Hauteur : ',h
-# print 'Hauteur en :',1000*(te - ts),' milliseconds'
+ts = time.clock()
+h = Hauteur(arbre)
+te = time.clock()
+print 'Hauteur : ',h
+print 'Hauteur en :',1000*(te - ts),' milliseconds'
 
-# ts = time.clock()
-# pm = ProfondeurMoyenne(arbre)
-# te = time.clock()
-# print 'Profondeur Moyenne : ',pm
-# print 'Profondeur moyenne en :',1000*(te - ts),' milliseconds'
+ts = time.clock()
+pm = ProfondeurMoyenne(arbre)
+te = time.clock()
+print 'Profondeur Moyenne : ',pm
+print 'Profondeur moyenne en :',1000*(te - ts),' milliseconds'
 
-# ts = time.clock()
-# th = Prefixe(arbre,"the")
-# te = time.clock()
-# print 'Prefixe the apparait : ',th
-# print 'Prefixe the en :',1000*(te - ts),' milliseconds'
+ts = time.clock()
+th = Prefixe(arbre,"the")
+te = time.clock()
+print 'Prefixe the apparait : ',th
+print 'Prefixe the en :',1000*(te - ts),' milliseconds'
 
-# ts = time.clock()
-# liste = ListeMots(arbre)
-# te = time.clock()
-# print 'Liste en :',1000*(te - ts),' milliseconds'
+ts = time.clock()
+liste = ListeMots(arbre)
+te = time.clock()
+print 'Liste en :',1000*(te - ts),' milliseconds'
 
-# ts = time.clock()
-# arbre2 = hybrid_structure.clone(arbre)
-# te = time.clock()
-# print 'Clonage en :',1000*(te - ts),' milliseconds'
+ts = time.clock()
+arbre2 = hybrid_structure.clone(arbre)
+te = time.clock()
+print 'Clonage en :',1000*(te - ts),' milliseconds'
 
-# ts = time.clock()
-# for mot in liste :
-#     if liste.index(mot) % 2 == 0 :
-#         Suppression(arbre,mot)
-#     else :
-#         Suppression(arbre2,mot)
+ts = time.clock()
+for mot in liste :
+    if liste.index(mot) % 2 == 0 :
+        Suppression(arbre,mot)
+    else :
+        Suppression(arbre2,mot)
 
-# te = time.clock()
-# print 'Suppression massive en :',1000*(te - ts),' milliseconds'
-# print 'Nombre de mots arbre : ',str(ComptageMots(arbre))
-# print 'Nombre de mots arbre 2 : ',str(ComptageMots(arbre2))
+te = time.clock()
+print 'Suppression massive en :',1000*(te - ts),' milliseconds'
+print 'Nombre de mots arbre : ',str(ComptageMots(arbre))
+print 'Nombre de mots arbre 2 : ',str(ComptageMots(arbre2))
 
-arbre = Exemple_de_Base()
-
-print Hauteur(arbre)
+avant = ProfondeurMoyenne(arbre)
+ts = time.clock()
+Equilibre(arbre)
+te = time.clock()
+apres = ProfondeurMoyenne(arbre)
+print 'Equilibrage en :',1000*(te - ts),' milliseconds'
+print 'Profondeur moyenne avant Equilibrage : ',str(avant)
+print 'Profondeur moyenne apres Equilibrage : ',str(apres)

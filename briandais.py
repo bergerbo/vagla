@@ -138,7 +138,7 @@ print 'Fusion en :',1000*(te - ts),' milliseconds'
 
 liste3 = ListeMots(arbre3)
 print 'Nombre de mots arbre : ',str(ComptageMots(arbre3))
-print liste3
+#print liste3
 
 
 

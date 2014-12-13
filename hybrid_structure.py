@@ -227,6 +227,7 @@ class Node():
         return ret
 
 
+
     def compte_mots(self, n):
         cpt = 0
         if self.value == end_of_word:
