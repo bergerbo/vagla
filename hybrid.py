@@ -154,7 +154,52 @@ def Equilibre(arbre):
     return hybrid_structure.clone(arbre)
 
 
+def Equilibre2(arbre):
+    
+    h_sup = 0;
+    h_inf = 0;
+    h_eq = 0;
+    
+    if arbre.inf is not None :
+        data = Equilibre2(arbre.inf)
+        h_inf = 1 + data['hauteur']
+        arbre.inf = data['arbre']
+        
+    if arbre.sup is not None :
+        data = Equilibre2(arbre.sup)
+        h_sup = 1 + data['hauteur']
+        arbre.sup = data['arbre']
+        
+    if arbre.eq is not None :
+        data = Equilibre2(arbre.eq)
+        h_eq = 1 + data['hauteur']
+        arbre.eq = data['arbre']
 
+    pivot = arbre
+
+
+    while h_sup > h_inf + 1 :
+        
+        pivot = arbre.sup
+        arbre.sup = arbre.sup.inf
+        pivot.inf = arbre
+        
+        h_sup -= 1
+        h_inf += 1
+        
+    while h_inf > h_sup + 1 :
+        
+        pivot = arbre.inf
+        arbre.inf = arbre.inf.sup
+        pivot.sup = arbre
+        
+        h_inf -= 1
+        h_sup += 1
+
+
+    hauteur = max(h_sup, h_inf)
+
+    return { 'arbre': pivot, 'hauteur': hauteur }
 # arbre = Exemple_de_Base()
 
 
@@ -244,11 +289,11 @@ print 'Suppression massive en :',1000*(te - ts),' milliseconds'
 print 'Nombre de mots arbre : ',str(ComptageMots(arbre))
 print 'Nombre de mots arbre 2 : ',str(ComptageMots(arbre2))
 
-avant = ProfondeurMoyenne(arbre)
+avant = Hauteur(arbre)
 ts = time.clock()
 Equilibre(arbre)
 te = time.clock()
-apres = ProfondeurMoyenne(arbre)
+apres = Hauteur(arbre)
 print 'Equilibrage en :',1000*(te - ts),' milliseconds'
-print 'Profondeur moyenne avant Equilibrage : ',str(avant)
-print 'Profondeur moyenne apres Equilibrage : ',str(apres)
+print 'Hauteur avant Equilibrage : ',str(avant)
+print 'Hauteur apres Equilibrage : ',str(apres)
