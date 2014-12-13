@@ -109,7 +109,7 @@ def Suppression(arbre,word):
     arbre.del_word(word)
 
 def Equilibre(arbre):
-    print "passe"
+
     if arbre.inf is not None:
         h1 = Hauteur(arbre.inf)
     else:
@@ -119,35 +119,39 @@ def Equilibre(arbre):
         h2 = Hauteur(arbre.sup)
     else:
         h2 = 0
-    print h1
-    print h2
-    if h1-h2 >= 2:
+
+    print 'h1 : ',h1
+    print 'h2 : ',h2
+
+    if h1 <= 1 and h2 <= 1:
+        return arbre
+
+    if h1>h2:
         pivot = arbre.inf
-        arbre.self = arbre.sup
-        if arbre.inf is not None:
-            arbre.inf.inf = pivot.inf
-        pivot = arbre
-        arbre.inf = pivot
-        arbre.inf.sup = pivot.sup.inf
+        pivot.sup = arbre
+        if arbre.inf.sup is not None:
+            pivot.sup.inf = arbre.inf.sup
+        else:
+            pivot.sup.inf = None
+        arbre = pivot
         
 
-    elif h2-h1 >= 2:
+    if h2>h1:
         pivot = arbre.sup
-        arbre.self = arbre.inf
-        if arbre.sup is not None:
-            arbre.sup.sup = pivot.sup
-        pivot = arbre
-        arbre.sup = pivot
-        arbre.sup.inf = pivot.inf.sup
-    else:
-        return arbre
-    print "apres"
-
+        pivot.inf = arbre
+        if arbre.sup.inf is not None:
+            pivot.inf.sup = arbre.sup.inf
+        else:
+            pivot.inf.sup = None
+        arbre = pivot
+    
     if arbre.inf is not None:
-        Equilibre(arbre.inf)
+        arbre.inf = Equilibre(arbre.inf)
     if arbre.sup is not None:
-        Equilibre(arbre.sup)
+        arbre.sup = Equilibre(arbre.sup)
     return arbre
+
+
 
 # arbre = Exemple_de_Base()
 
